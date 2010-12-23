@@ -1,13 +1,20 @@
 !!!
-%html
+%html{:xmlns => "http://www.w3.org/1999/xhtml"}
   %head
     %title 
       =$siteTitle
-    %link{:href => 'style/base.css?cdv=1', :rel => 'stylesheet', :type => 'text/css'}  
-    %link{:href => 'style/theme.css?cdv=1', :rel => 'stylesheet', :type => 'text/css'} 
+    %meta{'http-equiv' => "content-type", :content => "text/html; charset=utf-8"}
+    %meta{:name => "language", :content => "english"}
+    %meta{:name => "author", :content => $author}
+    %link{:href => "design/style/base.css?cdv=1", :rel => "stylesheet", :type => "text/css"}  
+    %link{:href => "design/theme/theme.css?cdv=1", :rel => "stylesheet", :type => "text/css"} 
+    %link{:rel => "icon", :type => "image/png", :href => "/favicon.png"}
+    %meta{:name => "description", :content => $siteDescription}
+    %meta{:name => "keywords", :content => $siteKeywords}  
+
     /[if lte IE 8]
       :javascript 
-        document.createElement('footer');document.createElement('header');
+        document.createElement("footer");document.createElement("header");
   %body
     .top
       .header
@@ -28,7 +35,9 @@
       =yield
     .footer
       %p
-        Powered by Redback a Ruby port of the
+        Powered by 
+        %a{:href => "https://github.com/andrewtobin/redback"} Redback 
+        a Ruby port of the
         %a{:href => "http://www.funnelweblog.com"} FunnelWeb
         blog engine.
       %p
