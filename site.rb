@@ -3,7 +3,7 @@ require 'haml'
 require 'rest_client'
 require 'json'
 
-$siteTitle = 'Site Name'
+$siteTitle = 'Matt Hamilton'
 
 helpers do
   include Rack::Utils
