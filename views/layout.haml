@@ -1,0 +1,35 @@
+!!!
+%html
+  %head
+    %title 
+      =$siteTitle
+    %link{:href => 'style/base.css?cdv=1', :rel => 'stylesheet', :type => 'text/css'}  
+    %link{:href => 'style/theme.css?cdv=1', :rel => 'stylesheet', :type => 'text/css'} 
+    /[if lte IE 8]
+      :javascript 
+        document.createElement('footer');document.createElement('header');
+  %body
+    .top
+      .header
+        %a.logo{:href => "/", :title => $siteTitle} 
+          =$siteTitle
+    .nav
+      %ul
+        %li
+          %a{:href => "/"} Home
+        %li
+          %a{:href => "/about"} About        
+      .search
+        %form{:action => "/search", :method => "get"}
+          %p
+            %input#medium{:alt => "Search", :id => "q", :type => "text", :value => ""}
+            %input#submit{:type => "submit", :id => "search", :value => "Search"}
+    .body
+      =yield
+    .footer
+      %p
+        Powered by Redback a Ruby port of the
+        %a{:href => "http://www.funnelweblog.com"} FunnelWeb
+        blog engine.
+      %p
+        Is this your blog? <a href="/login">Log in and update it</a>.
