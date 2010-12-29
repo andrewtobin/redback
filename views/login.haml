@@ -1,0 +1,17 @@
+:javascript
+  $(document).ready(function(){
+    $("#Login").validate();
+  });
+%h1 Login
+%p.good
+  To administer this site, log in using the form below. The password is stored in the settings document.
+%form{ :id => "Login", :action => "", :method => "post"}
+  %text
+    .form-body
+      .editor-label
+        %label{:for => "password"} Password
+      .editor-field
+        %input{:type => "password", :name => "password", :class => "text required password"}
+      .editor-label
+      .editor-field
+        %input{:type => "submit", :id => "submit", :class => "submit", :value => "Submit"}

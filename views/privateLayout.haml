@@ -1,0 +1,27 @@
+!!!
+%html{:xmlns => "http://www.w3.org/1999/xhtml"}
+  %head
+    %title 
+      =$siteTitle
+    %meta{'http-equiv' => "content-type", :content => "text/html; charset=utf-8"}
+    %link{:href => "/design/style/admin.css?cdv=1", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "/design/style/base.css?cdv=1", :rel => "stylesheet", :type => "text/css"}  
+    %link{:rel => "icon", :type => "image/png", :href => "/favicon.png"}
+
+    /[if lte IE 8]
+      :javascript 
+        document.createElement("footer");document.createElement("header");
+  %body
+    .top
+      .header
+        %a.logo{:href => "/", :title => "Administration"} 
+          Administration
+    .nav
+      %ul
+        %li
+          %a{:href => "/"} Home
+    .body
+      .content
+        =yield
+    .footer
+      This is an admin page, so you won't see the standard header, footer and styles being applied. It's for your own protection.
