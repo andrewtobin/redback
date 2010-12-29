@@ -20,6 +20,16 @@
       %ul
         %li
           %a{:href => "/"} Home
+        - if authorized?
+          %li
+            %a{:href => "/wiki/new"} New Post
+          %li
+            %a{:href => "/admin"} Admin
+          %li
+            %a{:href => "/wiki/unpublished"} Unpublished Posts
+          %li
+            %a{:href => "/logout"} Logout
+  
     .body
       .content
         =yield

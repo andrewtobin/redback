@@ -1,7 +1,5 @@
 require 'sinatra'
 require 'haml'
-require 'openssl'
-require 'digest/sha2'
 require 'couchrest'
 
 if ENV['CLOUDANT_URL']
@@ -12,37 +10,9 @@ else
   set :db, CouchRest.database!( 'http://localhost:5984/redback' )
 end
 
-$pass = 'redback'
+$password = 'redback'
 
 enable :sessions
-
-class Pass
-  attr_accessor :salt, :key, :encrypted, :decrypted
-  
-  def encryptnew(plainText)
-    c = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
-    c.encrypt
-    c.key = Digest::SHA512.digest($siteKey)
-    c.iv = @salt = c.random_iv
-    p = Digest::SHA512.digest(@salt + '--' + plainText)
-    encryptedText = c.update(p)
-    encryptedText << c.final
-    $salt = @salt
-    @encrypted = encryptedText
-  end
-
-  def encrypt(plainText, salt)
-    c = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
-    c.encrypt
-    c.key = Digest::SHA512.digest($siteKey)
-    c.iv = salt
-    p = Digest::SHA512.digest(@salt + '--' + plainText)
-    encryptedText = c.update(p)
-    encryptedText << c.final
-    @encrypted = encryptedText
-  end
-end
-
 
 helpers do
   include Rack::Utils
@@ -62,15 +32,11 @@ helpers do
   end
 
   def authorized?
-    if $password == "" 
-      true
-    end  
-    session[:pass] == $password
+    session[:pass] == $password ? true : false
   end
   
   def login(password)
-    p = Pass.new
-    if $password == p.encrypt(password, $salt)
+    if $password == password
         session[:pass] = $password
         true
     else
@@ -79,6 +45,9 @@ helpers do
     end
   end
   
+  def logout
+    session[:pass] = nil
+  end
 end
 
 set :haml, :format => :html5
@@ -92,8 +61,6 @@ get '/' do
       $siteDescription = @settings['SiteDescription']
       $siteKeywords = @settings['SiteKeywords']
       $siteKey = 'RedbackBlog'
-      $password = @settings['Password']
-      $salt = @settings['Salt']
     rescue RestClient::ResourceNotFound
       options.db.save_doc({'_id' => 'settings', :SiteTitle => 'Redback Site', :Author => 'Not set', :SiteDescription => 'Not set', :SiteKeywords => 'Not set'})
       @settings = options.db.get('settings')
@@ -126,7 +93,7 @@ end
 
 post '/login' do
     @result = login(params[:password])
-    if authorised?
+    if authorized?
         redirect '/admin'
     else
         @error = 'Password incorrect'
@@ -134,7 +101,13 @@ post '/login' do
     end
 end
 
+get '/logout' do
+    logout
+    redirect '/'
+end
+
 get '/admin' do
+    protected!
     haml :admin, :layout => :privateLayout
 end
 

@@ -1,3 +1,21 @@
-.intro{:id => "_summary"}
-.content
-  %h1 Admin
+%h1 Blog Administration
+.admin-link
+  %h3
+    %a{:href => "/admin/settings"} General settings
+  %p Configure site-wide settings, such as the blog title and introduction text, page headers and footers, and so on.
+.admin-link
+  %h3
+    %a{:href => "/admin/comments"} Comments
+  %p This page allows you to delete and mark comments as spam.
+.admin-link
+  %h3
+    %a{:href => "/admin/pingbacks"} Pingbacks
+  %p Pingbacks are created when other blogs link to your blog. This page allows to you delete pingbacks if they are spam.
+.admin-link
+  %h3
+    %a{:href => "/admin/feeds"} RSS Feeds
+  %p We allow you to set up multiple RSS feeds. Use this page to manage them.
+.admin-link
+  %h3
+    %a{:href => "/admin/uploads"} File Uploads
+  %p This area allows you to upload files.

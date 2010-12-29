@@ -6,8 +6,8 @@
     %meta{'http-equiv' => "content-type", :content => "text/html; charset=utf-8"}
     %meta{:name => "language", :content => "english"}
     %meta{:name => "author", :content => $author}
-    %link{:href => "design/style/base.css?cdv=1", :rel => "stylesheet", :type => "text/css"}  
-    %link{:href => "design/theme/theme.css?cdv=1", :rel => "stylesheet", :type => "text/css"} 
+    %link{:href => "/design/style/base.css?cdv=1", :rel => "stylesheet", :type => "text/css"}  
+    %link{:href => "/design/theme/theme.css?cdv=1", :rel => "stylesheet", :type => "text/css"} 
     %link{:rel => "icon", :type => "image/png", :href => "/favicon.png"}
     %meta{:name => "description", :content => $siteDescription}
     %meta{:name => "keywords", :content => $siteKeywords}  
@@ -24,9 +24,16 @@
       %ul
         %li
           %a{:href => "/"} Home
-        %li
-          %a{:href => "/about"} About        
-      .search
+        - if authorized?
+          %li
+            %a{:href => "/wiki/new"} New Post
+          %li
+            %a{:href => "/admin"} Admin
+          %li
+            %a{:href => "/wiki/unpublished"} Unpublished Posts
+          %li
+            %a{:href => "/logout"} Logout
+        .search
         %form{:action => "/search", :method => "get"}
           %p
             %input#medium{:alt => "Search", :id => "q", :type => "text", :value => ""}
