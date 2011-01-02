@@ -1,0 +1,8 @@
+{
+   "_id": "_design/feeds",
+   "views": {
+       "all": {
+           "map": "function(doc) { if (doc.Type == 'feed') emit(doc._id, doc); }"
+       }
+   }
+}

@@ -1,0 +1,15 @@
+{
+   "_id": "_design/posts",
+   "views": {
+       "all": {
+           "map": "function(doc) { if (doc.Type == 'post') emit(doc._id, doc); }"
+       },
+       "by_postdate": {
+           "map": "function(doc) { if (doc.Type == 'post') emit(doc.PublishDate, doc); }"
+       },
+       "total_posts": {
+           "map": "function(doc) { if (doc.Type == 'post') emit('posts', 1); }",
+           "reduce": "function(keys, values, rereduce) { return sum(values); }"
+       }
+   }
+}
