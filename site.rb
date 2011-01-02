@@ -3,7 +3,7 @@ require 'haml'
 require 'couchrest'
 require 'uri'
 require 'net/http'
-require 'maruku'
+#require 'maruku'
 
 if ENV['CLOUDANT_URL']
   set :db, CouchRest.database!( ENV['CLOUDANT_URL'] + '/redback' )
