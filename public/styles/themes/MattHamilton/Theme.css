@@ -1,4 +1,4 @@
-body
+﻿body
 {
     margin: 30px auto;
     background: white url(backgnd.png) repeat-x scroll 0 0;
@@ -101,7 +101,7 @@ h5
     margin: 0 15px;
     margin-top: 70px;
     float: right;
-    width: 220px;
+    max-width: 220px;
 }
 .intro h1
 {
@@ -166,6 +166,13 @@ h5
 .comment
 {
     border-bottom: 1px solid #ccc;
+}
+
+.comment .comment-author
+{
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
 }
 
 pre

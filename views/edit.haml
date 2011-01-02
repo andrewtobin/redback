@@ -1,0 +1,74 @@
+.Summary
+  - if @entry.IsNew
+    %p The page you navigated to has not been created yet. Use the editor below to create the first version of this page.
+  - else
+    %p Use the editor below to update this page. Alternatively,
+- if @entry.IsNew
+  %h1 
+    Create: 
+    = @entry.Title
+- else
+  %h1 Edit: = @entry.Title
+
+%form{ :id => "Edit", :action => "edit", :method => "post", :class => "promptBeforeUnload"}
+  .form-body
+    .editor-label Name
+    .editor-field
+      %input{:type => "text", :name => "Name", :class => "text required medium", :value => @entry.Name, :maxlength => 50}
+      - unless @entry.Name.nil? or @entry.Name == ''          
+        %span
+          %a{:href => '/' + @entry.Name} #{@entry.Name}
+      %span.hint This will appear in the URL to the page.      
+    .editor-label Title
+    .editor-field
+      %input{:type => "text", :name => "Title", :class => "text required medium", :value => @entry.Title, :maxlength => '200' }
+      %span.hint This appears at the top of this page and on the home page.
+    .editor-label Meta-title
+    .editor-field
+      %input{:type => "text", :name => "MetaTitle", :class => "text required medium", :value => @entry.MetaTitle, :maxlength => '65'}
+      %span.hint This appears at the top of the browser tab and is used by search engines.
+    .editor-label Publish date
+    .editor-field
+      %input{:type => "text", :name => "PublishDate", :class => "required date", :value => @entry.PublishDate}
+      %span.hint This page will not appear in any feeds until after the date above.
+    .editor-label Description
+    .editor-field
+      %textarea{:name => "MetaDescription", :class => "text required large", :cols => 20, :rows => 2, :maxlength => '150'} #{@entry.MetaDescription}
+      %span.hint A short description that will appear in the &lt;meta&gt; tags of the page, and on the home page as a summary.
+    .editor-label Sidebar
+    .editor-field
+      %textarea{:name => "Sidebar", :class => "text large", :cols => 20, :rows => 2, :maxlength => '1000'} #{@entry.Summary}
+      %span.hint This will appear at the right of the page. Use it to provide a quick description of the page to users. Use markdown or HTML.
+    .editor-label Keywords
+    .editor-field
+      %input{:type => "text", :name => "Keywords", :class => "text required large", :value => @entry.MetaKeywords, :maxlength => '100'}
+      %span.hint Comma-separated keywords that will appear in the &lt;meta&gt; tags of the page.
+    .editor-label Upload
+    .editor-field
+      %span
+        %a{:href => '/upload', :target => '_blank'} Click here to upload files...
+    .editor-label Content
+    .editor-field
+      .wmd-panel{:id => 'wmd-button-bar'}
+      %textarea{:id => "wmd-input", :name => "Content", :class => "wmd-panel text required", :cols => 80, :rows => 18} #{@entry.Content}
+   
+    .editor-label Feeds
+    .editor-field
+      - unless @entry.Feeds.empty?
+        - @entry.Feeds.each do |feed|
+          %input{:type => "checkbox", :name => "FeedIds", :id => "feedIds", :value => feed.ID} feed.Title
+      %span.hint When you save this entry, it will appear in the feeds above.
+      
+    .editor-label Change summary
+    .editor-field
+      %textarea{:name => "ChangeSummary", :class => "text required large", :cols => 20, :rows => 2, :maxlength => '300'} #{@entry.Reason}      
+      %span.hint A brief overview of what was changed and why. This will appear on the page history.
+    .editor-label Allow comments
+    .editor-field
+      %input{:type => "checkbox", :name => "AllowComments", :checked => @entry.IsDiscussionEnabled}
+      %span.hint If checked, allows users to post comments on this page.
+    .editor-label
+    .editor-field
+      %input{:type => "submit", :name => "submit", :value => 'Save'}
+%h3 Preview
+.wmd-panel{:id => 'wmd-preview'}

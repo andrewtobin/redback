@@ -1,0 +1,109 @@
+:javascript
+  $(document).ready(function(){
+    $("#settingsForm").validate();
+  });
+.content
+  %h1 Settings
+  %form{ :id => "settingsForm", :action => "", :method => "post", :class => "promptBeforeUnload"}
+    %fieldset
+      .form-body
+        %h3 Site Information
+        .editor-label Title
+        .editor-field
+          %input{:type => "text", :name => "SiteTitle", :class => "text required large", :value => @settings['SiteTitle'], :maxlength => 200}
+          %span.hint The title shown at the top in the browser.
+        .editor-label Home Url
+        .editor-field
+          %input{:type => "text", :name => "SiteUrl", :class => "text required large", :value => @settings['SiteUrl'], :maxlength => 200}
+          %span.hint The url the site exists on (including http://).
+        .editor-label Introduction
+        .editor-field
+          %textarea{:name => "Introduction", :class => "text large", :maxlength => '5000'} #{@settings['Introduction']}
+          %span.hint The welcome text that is shown on the home page. You can use markdown.
+        %h3 Appearance
+        .editor-label Main Links
+        .editor-field
+          %textarea{:name => "MainLinks", :class => "text large", :maxlength => '5000'} #{@settings['MainLinks']}
+          %span.hint A list of links shown at the top of each page. Use HTML for this.
+        .editor-label Footer
+        .editor-field
+          %textarea{:name => "SiteFooter", :class => "text large", :maxlength => '3000'} #{@settings['SiteFooter']}
+          %span.hint This will appear at the bottom of the page - use it to add copyright information, links to any web hosts, people or technologies that helped you to build the site, and so on.
+        .editor-label Theme
+        .editor-field
+          %select{:name => "SiteTheme"} 
+            - @themes.each do |theme|
+              %option{:value => theme, :selected => theme == $siteTheme} #{theme}
+          %span.hint The theme which will be used for this website.
+        %h3 Metadata
+        .editor-label Author
+        .editor-field
+          %input{:type => "text", :name => "Author", :class => "text required large", :value => @settings['Author'], :maxlength => 100}
+          %span.hint Your name. Rendered as a meta tag.
+        .editor-label Meta-Keywords
+        .editor-field
+          %input{:type => "text", :name => "SiteKeywords", :class => "text large", :value => @settings['SiteKeywords'], :maxlength => 100}
+          %span.hint Keywords shown to search engines in the meta-keywords tag (comma-separated text).
+        .editor-label Meta-Description
+        .editor-field
+          %input{:type => "text", :name => "SiteDescription", :class => "text large", :value => @settings['SiteDescription'], :maxlength => 150}
+          %span.hint The description shown to search engines in the meta description tag.
+        %h3 File Uploads
+        .editor-label File Upload Path
+        .editor-field
+          %input{:type => "text", :name => "UploadPath", :class => "text large", :value => @settings['UploadPath'], :maxlength => 300}
+          %span.hint Files you upload for blog posts will be stored here. Use ~/XYZ to indicate a file path under the website root.
+        %h3 Spam
+        .editor-label Akismet API Key
+        .editor-field
+          %input{:type => "text", :name => "AkismetApiKey", :class => "text medium", :value => @settings['AkismetApiKey'], :maxlength => 30}
+          %span.hint If you have your own API key for Akismet, place it here.
+        .editor-label Spam blacklist
+        .editor-field
+          %textarea{:name => "SpamWords", :class => "text large", :maxlength => '500'} #{@settings['SpamWords']}
+          %span.hint Comments with these words (case-insensitive) will automatically be marked as spam, in addition to Akismet. Seperate using spaces or newlines.
+        %h3 HTML
+        .editor-label HTML Head
+        .editor-field
+          %textarea{:name => "HtmlHead", :class => "text large", :maxlength => '2000'} #{@settings['HtmlHead']}
+          %span.hint Custom HTML that will appear just before the &lt;/head&gt; tag
+        .editor-label HTML Footer
+        .editor-field
+          %textarea{:name => "HtmlFoot", :class => "text large", :maxlength => '2000'} #{@settings['HtmlFoot']}
+          %span.hint Custom HTML that will appear just before the &lt;/body&gt; tag
+        %h3 Email notifications
+        .editor-label Notify me
+        .editor-field
+          %input{:type => "checkbox", :name => "CommentNotification", :checked => @settings['CommentNotification']}
+          %span.hint Notify me when comments are posted.
+        .editor-label Server
+        .editor-field
+          %input{:type => "text", :name => "SmtpServer", :class => "text large", :value => @settings['SmtpServer'], :maxlength => 100}
+          %span.hint The server name for your SMTP server.
+        .editor-label Port
+        .editor-field
+          %input{:type => "text", :name => "SmtpPort", :class => "text small", :value => @settings['SmtpPort'], :maxlength => 4}
+          %span.hint The port that your SMTP server listens on.
+        .editor-label Use SSL
+        .editor-field
+          %input{:type => "checkbox", :name => "SmtpUseSsl", :checked => @settings['SmtpUseSsl']}
+          %span.hint Whether SSL should be used when sending emails.
+        .editor-label From
+        .editor-field
+          %input{:type => "text", :name => "SmtpFromEmailAddress", :class => "email large", :value => @settings['SmtpFromEmailAddress'], :maxlength => 200}
+          %span.hint The email address from which emails will be sent.
+        .editor-label To
+        .editor-field
+          %input{:type => "text", :name => "SmtpToEmailAddress", :class => "email large", :value => @settings['SmtpToEmailAddress'], :maxlength => 200}
+          %span.hint The email address you want comment notification emails to be sent to.
+        .editor-label Username
+        .editor-field
+          %input{:type => "text", :name => "SmtpUsername", :class => "text medium", :value => @settings['SmtpUsername'], :maxlength => 100}
+          %span.hint If your SMTP server requires authentication, enter your username here, or leave it empty.
+        .editor-label Password
+        .editor-field
+          %input{:type => "text", :name => "SmtpPassword", :class => "text medium", :value => @settings['SmtpPassword'], :maxlength => 100}
+          %span.hint If your SMTP server requires authentication, enter your password here, or leave it empty.       
+        %h3 Save
+        %p
+          %input{:type => "submit", :name => "submit", :class => "submit", :value => 'Save'}

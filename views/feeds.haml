@@ -1,0 +1,27 @@
+.content
+  %h1 Feeds
+  %form{ :id => "Feeds", :action => "", :method => "post", :class => "promptBeforeUnload"}
+    %table
+      %thead
+        %tr
+          %td Name
+          %td Title
+          %td Entries
+          %td Actions
+      - @feeds.each do |feed|
+        %tr
+          %td #{feed['value']['Name']}
+          %td #{feed['value']['Title']}
+          %td
+          %td 
+            %a{:href => "/admin/deletefeed/" + feed['value']['Name']} Delete
+    .form-body
+      .editor-label URL name
+      .editor-field
+        %input{:type => "text", :name => "FeedName", :class => "required short text", :id => "FeedName", :maxlength => 30, :value => ""}
+      .editor-label Title
+      .editor-field
+        %input{:class => "required short text", :id => "FeedTitle", :maxlength => 40, :name => "FeedTitle", :type => "text", :value => ""}
+      .editor-label
+      .editor-field
+        %input{:type => "submit", :name => "submit", :value => 'Create this Feed'}

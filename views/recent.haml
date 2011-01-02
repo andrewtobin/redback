@@ -1,23 +1,33 @@
 .intro{:id => "_summary"}
+  :markdown 
+    #{$siteDescription}
 .content
   %h1 Recent Posts
-  - if @posts.size > 0
-    - @posts.each do |p|
-      .post-list
+  .post-list
+    - if @posts.size > 0
+      - @posts.each do |p|
         .post-line
-        .revised
-          %span.month 
-            = p.month
-          %span.year
-            = p.year
-        .comments
-          %a{:href => p.url}
-            %span.comment-count 
-              = p.comments
-            %span comments
-        .summary
-          %h2
-            %a{:href => p.url} 
-              = p.title
-          %p 
-            = p.abstract  
+          .revised
+            - unless p['value']['PublishDate'].nil?
+              %span.month #{Time.parse(p['value']['PublishDate']).strftime('%b %d')}
+              %span.year #{Time.parse(p['value']['PublishDate']).strftime('%Y')}
+          .comments
+            %a{:href => '/' + h(p['value']['Name']) + '#comments'}
+              %span.comment-count 
+                x
+              %span comments
+          .summary
+            %h2
+              %a{:href => '/' + h(p['value']['Name'])} #{p['value']['Title']}
+            %p #{p['value']['Summary']}
+  - if @pages > 0
+    .paginator
+      %span.title Page:
+      - 0.upto(@pages).each do |i|
+        - if i == @page
+          #{i + 1}
+        - else
+          - if i == 0
+            %a{:href => '/'} #{i + 1}
+          - else
+            %a{:href => '/' + i.to_s} #{i + 1}
