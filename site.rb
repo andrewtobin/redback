@@ -1,9 +1,7 @@
-require 'sinatra'
-require 'haml'
-require 'couchrest'
-require 'uri'
-require 'net/http'
-require 'maruku'
+['sinatra', 'haml', 'couchrest', 'uri', 'net/http', 'maruku'].each {|gem| require gem}
+
+require './model/Entry.rb'
+require './model/Akismet.rb'
 
 if ENV['CLOUDANT_URL']
   set :db, CouchRest.database!( ENV['CLOUDANT_URL'] + '/redback' )
@@ -109,35 +107,6 @@ helpers do
   def logout
     session[:pass] = nil
   end
-end
-
-class Entry
-    attr_accessor :Title, :MetaTitle, :PublishDate,
-        :Name, :Summary, :IsVisable, :Published, :Revisions, :Comments, :Pingbacks,
-        :MetaDescription, :MetaKeywords, :IsDiscussionEnabled, :IsNew,
-        :Reason, :Feeds, :Content
-        
-    def initialize
-        @Title = ''
-        @Name = ''
-        @Summary = ''
-        @Content = ''
-        @IsVisable = true
-        @Published = Time.now.utc
-        @Revisions = Array.new
-        @Comments = Array.new
-        @Pingbacks = Array.new
-        @Feeds = Array.new
-        @IsDiscussionEnabled = true
-        @IsNew = true
-    end
-end
-
-class Akismet
-    def validateKey
-        result = Net::HTTP.post_form(URI.parse('http://rest.akismet.com/1.1/verify-key'), {:key => $akismetApiKey, :blog => $siteUrl})
-        return result.body == 'valid'
-    end
 end
 
 set :haml, :format => :html5
