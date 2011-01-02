@@ -232,12 +232,15 @@ get '/admin/feeds' do
 end
 
 post '/admin/feeds' do
+    protected!
+    
     options.db.save_doc({'_id' => h(params[:FeedName]), :Name => params[:FeedName], :Title => params[:FeedTitle], :Type => 'feed'})
     redirect '/admin/feeds'
 end
 
 get '/admin/deletefeed/:feed' do
     protected!
+    
     @feeds = options.db.get(params[:feed])
     @feeds.destroy()
     
@@ -266,6 +269,7 @@ end
 
 get '/new' do
     protected!
+
     @entry = Entry.new
     @entry.Title = 'Enter a title'
     @entry.IsDiscussionEnabled = true
@@ -276,6 +280,8 @@ get '/new' do
 end
 
 post '/edit' do
+    protected!
+
 #    begin
 #        @entry = options.db.get(h(params[:Name]))
 #    rescue
