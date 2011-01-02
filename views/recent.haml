@@ -21,7 +21,7 @@
               %a{:href => '/' + h(p['value']['Name'])} #{p['value']['Title']}
             %p 
               :markdown
-                #{p['value']['Summary']}
+                #{p['value']['MetaDescription']}
   - if @pages > 0
     .paginator
       %span.title Page:
