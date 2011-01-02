@@ -46,7 +46,7 @@
       %script{:type => 'text/javascript', :src => '/scripts/Site/Site.js'}
     .footer
       = $siteFooter
-      - if authorized?
+      - if authorized? == false
         %p
           Is this your blog? 
           %a{:href => "/login"} Log in and update it.

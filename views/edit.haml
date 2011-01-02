@@ -1,20 +1,22 @@
 .Summary
-  - if @entry.IsNew
+  - if @entry.IsNew.to_s == 'true'
     %p The page you navigated to has not been created yet. Use the editor below to create the first version of this page.
   - else
     %p Use the editor below to update this page. Alternatively,
-- if @entry.IsNew
-  %h1 
-    Create: 
-    = @entry.Title
+- if @entry.IsNew.to_s == 'true'
+  %h1 Create: #{@entry.Title}
 - else
-  %h1 Edit: = @entry.Title
+  %h1 Edit: #{@entry.Title}
 
-%form{ :id => "Edit", :action => "edit", :method => "post", :class => "promptBeforeUnload"}
+%form{ :id => "Edit", :action => "", :method => "post", :class => "promptBeforeUnload"}
   .form-body
+    %input{:type => "hidden", :name => "IsNew", :value => @entry.IsNew ? 'true' : 'false'}
     .editor-label Name
     .editor-field
-      %input{:type => "text", :name => "Name", :class => "text required medium", :value => @entry.Name, :maxlength => 50}
+      - if @entry.IsNew.to_s == 'true'
+        %input{:type => "text", :name => "Name", :class => "text required medium", :value => @entry.Name, :maxlength => 50}
+      - else
+        %input{:type => "hidden", :name => "Name", :value => @entry.Name}
       - unless @entry.Name.nil? or @entry.Name == ''          
         %span
           %a{:href => '/' + @entry.Name} #{@entry.Name}

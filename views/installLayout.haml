@@ -1,0 +1,28 @@
+!!!
+%html{:xmlns => "http://www.w3.org/1999/xhtml"}
+  %head
+    %title 
+      =$siteTitle
+    %meta{'http-equiv' => "content-type", :content => "text/html; charset=utf-8"}
+    %link{:href => "/styles/layout/admin.css?cdv=1", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "/styles/layout/base.css?cdv=1", :rel => "stylesheet", :type => "text/css"}  
+    %link{:rel => "icon", :type => "image/png", :href => "/images/favicon.png"}
+
+    /[if lte IE 8]
+      :javascript 
+        document.createElement("footer");document.createElement("header");
+  %body
+    .top
+      .header
+        %a.logo{:href => "/", :title => "Installation"} Installation
+    .body
+      .content
+        =yield
+      %script{:type => 'text/javascript', :src => '/scripts/JQuery/jquery-1.3.2.min.js'}
+      %script{:type => 'text/javascript', :src => '/scripts/JQuery/jsdate.js'}
+      %script{:type => 'text/javascript', :src => '/scripts/Prettify/Prettify.js'}
+      %script{:type => 'text/javascript', :src => '/scripts/Showdown/Showdown.js'}
+      %script{:type => 'text/javascript', :src => '/scripts/Showdown/wmd.js'}
+      %script{:type => 'text/javascript', :src => '/scripts/Site/Site.js'}
+    .footer
+      This is an admin page, so you won't see the standard header, footer and styles being applied. It's for your own protection.

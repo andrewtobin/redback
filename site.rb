@@ -1,7 +1,7 @@
 ['sinatra', 'haml', 'couchrest', 'uri', 'net/http', 'maruku'].each {|gem| require gem}
 
-require './model/Entry.rb'
-require './model/Akismet.rb'
+require './models/entry.rb'
+require './models/akismet.rb'
 
 if ENV['CLOUDANT_URL']
   set :db, CouchRest.database!( ENV['CLOUDANT_URL'] + '/redback' )
@@ -12,6 +12,8 @@ else
 end
 
 $siteinitialized = false
+$installing = false
+
 $itemsperpage = 30
 
 enable :sessions
@@ -112,7 +114,56 @@ end
 set :haml, :format => :html5
 
 before do
-    initializesite
+    if $installing == false
+        begin
+            @settings = options.db.get('settings')
+        rescue         
+            $installing = true
+            redirect '/installation'
+        end
+    end
+    if $installing == false
+       initializesite
+    end
+end
+
+get '/installation' do
+    $siteTheme = 'RainbowAfro'
+    options.db.save_doc({'_id' => '_design/posts', 
+        'views' => { 'all' => { 'map' => "function(doc) { if (doc.Type == 'post') emit(doc._id, doc); }" },
+        'by_postdate' => { 'map' => "function(doc) { if (doc.Type == 'post') emit(doc.PublishDate, doc); }" },
+        'total_posts' => { 'map' => "function(doc) { if (doc.Type == 'post') emit('posts', 1); }", 'reduce' => "function(keys, values, rereduce) { return sum(values); }" }}})
+    options.db.save_doc({'_id' => '_design/feeds',
+        'views' =>  { 'all' => { 'map' => "function(doc) { if (doc.Type == 'feed') emit(doc._id, doc); }" }}})
+    options.db.save_doc({'_id' => 'settings',
+        'MainLinks' => '<li><a href="/about">About</a></li>',
+        'SiteDescription' => 'My website.',
+        'SiteUrl' => 'http://your-site.com/',
+        'SmtpUsername' => '',
+        'HtmlHead' => '',
+        'CommentNotification' => true,
+        'SmtpPort' => '21',
+        'Author' => 'Daffy Duck',
+        'SiteFooter' => '<p>Powered by <a href="https://github.com/andrewtobin/redback">Redback</a> a Ruby port of the <a href="http://www.funnelweblog.com">FunnelWeb</a> blog engine.</p>',
+        'Introduction' => 'Welcome to your FunnelWeb blog. You can <a href="/login">login</a> and edit this message in the administration section. The default password is <code>test</code>.',
+        'SmtpFromEmailAddress' => 'funnelweb@your-site.com',
+        'AkismetApiKey' => '37726b9324fe',
+        'SmtpPassword' => '',
+        'Password' => 'test',
+        'HtmlFoot' => '',
+        'SmtpServer' => '',
+        'SmtpUseSsl' => false,
+        'SiteTitle' => 'My FunnelWeb Site',
+        'SiteKeywords' => 'test, Ruby, Development, Software, Programming, Redback',
+        'SiteTheme' => 'RainbowAfro',
+        'UploadPath' => '~/files',
+        'SmtpToEmailAddress' => 'you@your-site.com'})
+
+    $installing = true
+
+    reinitializesite
+    
+    haml :install, :layout => :installLayout
 end
 
 get '/' do
@@ -238,44 +289,80 @@ end
 
 get '/new' do
     protected!
-
-    @entry = Entry.new
-    @entry.Title = 'Enter a title'
-    @entry.IsDiscussionEnabled = true
-    @entry.MetaTitle = 'Enter a meta title'
-    @entry.PublishDate = Time.now.strftime('%Y-%m-%d')
-    @entry.IsNew = true
-    haml :edit, :layout => :privateLayout
-end
-
-post '/edit' do
-    protected!
-
-#    begin
-#        @entry = options.db.get(h(params[:Name]))
-#    rescue
-        @entry = Entry.new
- #   end
-   
-    @entry.Name = params[:Name]
-    @entry.Title = params[:Title]
-    @entry.Summary = params[:Sidebar]
-    @entry.MetaTitle = params[:MetaTitle]
-    @entry.IsDiscussionEnabled = params[:AllowedComments]
-    @entry.MetaDescription = params[:MetaDescription]
-    @entry.MetaKeywords = params[:Keywords]
-    @entry.PublishDate = Time.now.utc
-    @entry.Content = params[:Content]
-    
-    options.db.save_doc({'_id' => h(params[:Name]), :Name => @entry.Name, :Title => @entry.Title, :Summary => @entry.Summary,
-        :PublishDate => @entry.PublishDate, :IsDiscussionEnabled => @entry.IsDiscussionEnabled, 
-        :MetaTitle => @entry.MetaTitle, :MetaDescription => @entry.MetaDescription, :MetaKeywords => @entry.MetaKeywords, 
-        :Content => @entry.Content, :Type => 'post'})
-
-    redirect '/' + h(params[:Name])
+    redirect '/edit/new'
 end
 
 get '/edit/:page' do
+    protected!
+    
+    if params[:page] == 'new'
+        @entry = Entry.new
+        @entry.Title = 'Enter a title'
+        @entry.IsDiscussionEnabled = true
+        @entry.MetaTitle = 'Enter a meta title'
+        @entry.PublishDate = Time.now.strftime('%Y-%m-%d')
+        @entry.IsNew = true
+    else
+        @post = options.db.get(h(params[:page]))
+        
+        @entry = Entry.new
+
+        @entry.Name = @post['Name']
+        @entry.Title = @post['Title']
+        @entry.Summary = @post['Summary']
+        @entry.MetaTitle = @post['MetaTitle']
+        @entry.MetaDescription = @post['MetaDescription']
+        @entry.MetaKeywords = @post['MetaKeywords']
+        @entry.PublishDate = @post['PublishDate']
+        @entry.Content = @post['Content']
+        @entry.Reason = @post['Reason']
+        @entry.IsDiscussionEnabled = @post['IsDiscussionEnabled']
+        
+        @entry.IsNew = false
+    end
+    
+    haml :edit, :layout => :privateLayout
+end
+
+post '/edit/:page' do
+    protected!
+
+    if params[:IsNew] == 'true'
+        @entry = Entry.new
+   
+        @entry.Name = params[:Name]
+        @entry.Title = params[:Title]
+        @entry.Summary = params[:Sidebar]
+        @entry.MetaTitle = params[:MetaTitle]
+        @entry.IsDiscussionEnabled = params[:AllowedComments]
+        @entry.MetaDescription = params[:MetaDescription]
+        @entry.MetaKeywords = params[:Keywords]
+        @entry.PublishDate = Time.now.utc
+        @entry.Content = params[:Content]
+        @entry.Reason = params[:ChangeSummary]
+     
+        options.db.save_doc({'_id' => h(params[:Name]), :Name => @entry.Name, :Title => @entry.Title, :Summary => @entry.Summary,
+            :PublishDate => @entry.PublishDate, :IsDiscussionEnabled => @entry.IsDiscussionEnabled, 
+            :MetaTitle => @entry.MetaTitle, :MetaDescription => @entry.MetaDescription, :MetaKeywords => @entry.MetaKeywords, 
+            :Reason => @entry.Reason, :Content => @entry.Content, :Type => 'post'})
+    else
+        @entry = options.db.get(h(params[:Name]))
+
+        @entry['Name'] = params[:Name]
+        @entry['Title'] = params[:Title]
+        @entry['Summary'] = params[:Sidebar]
+        @entry['MetaTitle'] = params[:MetaTitle]
+        @entry['IsDiscussionEnabled'] = params[:AllowedComments]
+        @entry['MetaDescription'] = params[:MetaDescription]
+        @entry['MetaKeywords'] = params[:Keywords]
+        @entry['PublishDate'] = Time.now.utc
+        @entry['Content'] = params[:Content]
+        @entry['Reason'] = params[:ChangeSummary]
+        
+        @entry.save()
+    end
+            
+    redirect '/' + h(params[:Name])
 end
 
 get '/revert/:page/:revision' do
