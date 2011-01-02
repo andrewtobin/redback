@@ -68,7 +68,8 @@ helpers do
   end
   
   def getposts(page)
-    numposts = options.db.view('posts/total_posts')['rows'].first['value']
+    p = options.db.view('posts/total_posts')['rows']
+    numposts = p.nil? ? p.first['value'] : 0
     pages = (numposts / $itemsperpage).ceil
     posts = options.db.view('posts/by_postdate', {:skip => $itemsperpage * page, :limit => $itemsperpage, :descending => true})['rows']
     return page, pages, posts
