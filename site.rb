@@ -13,6 +13,7 @@ end
 
 $siteinitialized = false
 $installing = false
+$installed = false
 
 $itemsperpage = 30
 
@@ -114,7 +115,7 @@ end
 set :haml, :format => :html5
 
 before do
-    if $installing == false
+    if $installing == false and $installed == false
         begin
             @settings = options.db.get('settings')
         rescue         
@@ -122,7 +123,8 @@ before do
             redirect '/installation'
         end
     end
-    if $installing == false
+    $installed = true
+    if $installing == false and $installed == true
        initializesite
     end
 end
@@ -145,22 +147,23 @@ get '/installation' do
         'SmtpPort' => '21',
         'Author' => 'Daffy Duck',
         'SiteFooter' => '<p>Powered by <a href="https://github.com/andrewtobin/redback">Redback</a> a Ruby port of the <a href="http://www.funnelweblog.com">FunnelWeb</a> blog engine.</p>',
-        'Introduction' => 'Welcome to your FunnelWeb blog. You can <a href="/login">login</a> and edit this message in the administration section. The default password is <code>test</code>.',
-        'SmtpFromEmailAddress' => 'funnelweb@your-site.com',
+        'Introduction' => 'Welcome to your Redback blog. You can <a href="/login">login</a> and edit this message in the administration section. The default password is <code>test</code>.',
+        'SmtpFromEmailAddress' => 'redback@your-site.com',
         'AkismetApiKey' => '37726b9324fe',
         'SmtpPassword' => '',
         'Password' => 'test',
         'HtmlFoot' => '',
         'SmtpServer' => '',
         'SmtpUseSsl' => false,
-        'SiteTitle' => 'My FunnelWeb Site',
+        'SiteTitle' => 'My Redback Site',
         'SiteKeywords' => 'test, Ruby, Development, Software, Programming, Redback',
         'SiteTheme' => 'RainbowAfro',
         'UploadPath' => '~/files',
         'SmtpToEmailAddress' => 'you@your-site.com'})
 
-    $installing = true
-
+    $installing = false
+    $installed = true
+    
     reinitializesite
     
     haml :install, :layout => :installLayout
