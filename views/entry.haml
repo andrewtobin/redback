@@ -1,6 +1,7 @@
 - unless @entry['Summary'].nil? or @entry['Summary'] == ''
   .intro{:id => "_summary"}
-    = @entry['Summary']
+    :markdown
+      = @entry['Summary']
 .content
   %h1
     %a{:href => '/' + h(@entry['Name']) } #{@entry['Title']}
@@ -8,4 +9,5 @@
     %span.month #{Time.parse(@entry['PublishDate']).strftime('%b %d')}
     %span.year #{Time.parse(@entry['PublishDate']).strftime('%Y')}
   .entry-container
-    = @entry['Content']
+    :markdown
+      = @entry['Content']

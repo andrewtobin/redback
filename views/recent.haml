@@ -1,5 +1,6 @@
 .intro{:id => "_summary"}
-  #{$siteDescription}
+  :markdown
+    #{$siteDescription}
 .content
   %h1 Recent Posts
   .post-list
@@ -18,7 +19,9 @@
           .summary
             %h2
               %a{:href => '/' + h(p['value']['Name'])} #{p['value']['Title']}
-            %p #{p['value']['Summary']}
+            %p 
+              :markdown
+                #{p['value']['Summary']}
   - if @pages > 0
     .paginator
       %span.title Page:
